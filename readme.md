@@ -83,3 +83,21 @@ No Golang, usamos o underline quando não queremos usar uma variável
 _, idade := getNomeEIdade()
 fmt.Println(idade)
 
+Existe um pacote que facilita a requisição web, é o "net/http". Ele tem um método Get, onde podemos passar o link do site. 
+E ele retorna algumas informações referente a esse site, como body, header, status e statuscode. 
+
+O método get retorna o response e erro. Podemos trabalhar apenas com o response, de imediato. 
+
+Caso eu queira fazer um loop infinito, no golang, não usamos o while, por exemplo, mas o for, sem passar uma condicional para ele, da seguinte maneira.
+
+func main() {
+
+	exibeInformacoes()
+	for {
+		exibeMenu()
+		printaTipoDeComando(readComando())
+	}
+}
+
+os dois métodos dentro do for vão ficar repetindo até que o usuário saia do programa.
+
