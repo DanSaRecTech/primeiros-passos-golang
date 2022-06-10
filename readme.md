@@ -7,7 +7,7 @@ Estudando GOlang, desde o princípio, como declarar variável, pacotes, função
 
 Todo método que vem de um pacote externo, inicia com letra maiúscula.
 
-![alt text](https://raw.githubusercontent.com/DanSaRecTech/primeiros-passos-golang/master/curso%20golang/fmt_Println.png)
+fmt.Println("Olá Sr.", nome)
 
 nota-se o uso do pacote fmt e seu método Println.
 
