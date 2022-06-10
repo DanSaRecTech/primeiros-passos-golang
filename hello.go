@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 )
 
@@ -12,8 +13,10 @@ const SAIR_DO_PROGRAMA int = 0
 func main() {
 
 	exibeInformacoes()
-	exibeMenu()
-	printaTipoDeComando(readComando())
+	for {
+		exibeMenu()
+		printaTipoDeComando(readComando())
+	}
 }
 
 func exibeInformacoes() {
@@ -40,7 +43,7 @@ func readComando() int {
 func printaTipoDeComando(comando int) {
 	switch comando {
 	case MONITORAR:
-		fmt.Println("Monitorando...")
+		iniciarMonitoramento()
 	case INICIAR_LOGS:
 		fmt.Println("Iniciando os logs...")
 	case SAIR_DO_PROGRAMA:
@@ -50,4 +53,21 @@ func printaTipoDeComando(comando int) {
 		fmt.Println("Não conheço esse comando!")
 		os.Exit(-1)
 	}
+}
+
+func iniciarMonitoramento() {
+	fmt.Println("Monitorando...")
+	site := "http://random-status-code.herokuapp.com/"
+	resp, _ := http.Get(site)
+	if resp.StatusCode == 200 {
+		fmt.Println("Site:", site, "foi carregado com sucesso! Status:", resp.Status)
+	} else {
+		fmt.Println("Buscando o log")
+		informarLogs(resp.StatusCode, site)
+	}
+}
+
+func informarLogs(status int, site string) {
+	fmt.Println("Iniciando os logs...")
+	fmt.Println("Site:", site, "se encontra instável no momento", status)
 }

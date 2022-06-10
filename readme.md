@@ -24,7 +24,7 @@ Quando não atribui um valor à variável, do tipo numérico, ele assume 0. Para
 O var não se faz necessários, desde que inicie a variável da seguinte forma: nome := "Dan". A linguagem infere e identifica que se trata de uma string. 
 Caro seja declarado uma variável e não usemos, ele informa um erro. Assim, não é possível buildar o projeto com uma variável sem tá em uso.
 
-### Módulo 2 - Controlando o fluxo do script
+### Módulo 3 - Controlando o fluxo do script
 
 O if é implementado sem os parênteses, da seguinte forma:
 
@@ -62,4 +62,24 @@ Porém, como eu informo o tipo na declaração da variável, não é necessário
 
 Assim, podemos usar o scan (sem f) e passar apenas o ponteiro comando. 
 -- fmt.scan(&comando)
+
+### Módulo 4 - Fazendo requisições para a web
+
+	nome, idade := getNomeEIdade()
+	fmt.Println(nome, idade)
+}
+
+func getNomeEIdade() (string, int) {
+	nome := "Dan"
+	idade := 32
+	return nome, idade
+}
+
+no exemplo acima, temos uma função onde retorna  dois valores. Para informar os tipos, é necessário colocar dentro de uma parênteses. 
+
+Ao declarar, separamos por vírgula, como no exemplo acima. Mas digamos que eu queira apenas receber a idade? 
+No Golang, usamos o underline quando não queremos usar uma variável
+
+_, idade := getNomeEIdade()
+fmt.Println(idade)
 
