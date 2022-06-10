@@ -28,14 +28,14 @@ Caro seja declarado uma variável e não usemos, ele informa um erro. Assim, nã
 
 O if é implementado sem os parênteses, da seguinte forma:
 
-if comando == 1 {
-    fmt.Println("Monitorando...")
-    } else if comando == 2 {
-	fmt.Println("Iniciando os logs...")
-    } else if comando == 0 {
-	fmt.Println("Saindo do programa...")
+	if readComando() == 1 {
+		fmt.Println("Monitorando...")
+	} else if readComando() == 2 {
+		fmt.Println("Iniciando os logs...")
+	} else if readComando() == 0 {
+		fmt.Println("Saindo do programa...")
 	} else {
-	fmt.Println("Não conheço esse comando!")
+		fmt.Println("Não conheço esse comando!")
 	}
 
 Também tem o switch, que é implementado da seguinte forma:
