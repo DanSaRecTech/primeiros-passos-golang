@@ -101,3 +101,69 @@ func main() {
 
 os dois métodos dentro do for vão ficar repetindo até que o usuário saia do programa.
 
+### As principais coleções em GO
+
+Arrays - Um array em go tem um tamanho fixo, limitando assim o uso do mesmo => var sites [4]string
+Caso não queira informar um array com tamanho fixo, o go disponibiliza o slice, que é uma abstração do array, mas com algumas funcionalidades a mais
+Abaixo algumas funções do slice
+
+func exibeNomes() {
+	nomes := []string{"Dan", "Maju", "Lorena"}
+
+	fmt.Println(reflect.TypeOf(nomes))
+	fmt.Println("O tamanho do meu slice:", len(nomes))
+	fmt.Println("O meu slice tem a capacidade de:", cap(nomes))
+	nomes = append(nomes, "Alice")
+	fmt.Println(nomes)
+	fmt.Println(reflect.TypeOf(nomes))
+	fmt.Println("O tamanho do meu slice:", len(nomes))
+	fmt.Println("O meu slice tem a capacidade de:", cap(nomes))
+}
+
+o len é para informar o tamanho do array, naquele momento.
+o cap é para informar a capacidade que o array tem. No exemplo acima, no primeiro cap, ele tem tamanho 3 e capacidade 3. 
+Depois que eu adiciono mais 1 elemento, na função append, o len do meu array para para 4 mas o cap dobra para 6. Isso acontece
+quando um array é estourado. O Go duplica o tamanho dele e coloca o novo valor.
+
+Existem 2 formas de interar. A tradicional e range
+
+## Abaixo a forma tradicional:
+
+for i := 0; i < len(sites); i++ {
+
+		resp, _ := http.Get(sites[i])
+
+		if resp.StatusCode == 200 {
+			fmt.Println("Site:", sites, "foi carregado com sucesso! Status:", resp.Status)
+		} else {
+			fmt.Println("Site:", sites[i], "está com problemas!!! Staus:", resp.StatusCode)
+		}
+	}
+
+## Abaixo a forma com range
+
+	for _, site := range sites {
+
+		resp, _ := http.Get(site)
+
+		if resp.StatusCode == 200 {
+			fmt.Println("Site:", site, "foi carregado com sucesso! Status:", resp.Status)
+		} else {
+			fmt.Println("Site:", site, "está com problemas!!! Staus:", resp.StatusCode)
+		}
+	}
+
+O primeiro parâmetro é o índice que ele vai tá passando naquele momento dentro do for e a segunda variável é o valor daquele índice. 
+
+-- O Go tem um pacote times onde ele dispõe de alguns métodos interessantes. Um deles é o sleep. Com esse método, podemos pedir para uma parte do nosso código
+-- aguardar um período para poder ser executado de novo. No exemplo abaixo, usamos 5 segundos. Mas pode ser minutos, horas, etc.
+
+for i := 0; i < 5; i++ {
+		for indice, site := range sites {
+			fmt.Println("")
+			fmt.Println("Testando site", indice, ":", site)
+			verificaSiteOnline(site)
+		}
+		time.Sleep(5 * time.Second)
+	}
+

@@ -4,11 +4,15 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"time"
 )
 
-const MONITORAR int = 1
-const INICIAR_LOGS int = 2
-const SAIR_DO_PROGRAMA int = 0
+const monitorar int = 1
+const iniciarLogs int = 2
+const sairDoPrograma int = 0
+
+const monitoramentos = 3
+const delayDoMonitoramento = 5
 
 func main() {
 
@@ -42,11 +46,11 @@ func readComando() int {
 
 func printaTipoDeComando(comando int) {
 	switch comando {
-	case MONITORAR:
+	case monitorar:
 		iniciarMonitoramento()
-	case INICIAR_LOGS:
+	case iniciarLogs:
 		fmt.Println("Iniciando os logs...")
-	case SAIR_DO_PROGRAMA:
+	case sairDoPrograma:
 		fmt.Println("Saindo do programa...")
 		os.Exit(0)
 	default:
@@ -57,17 +61,26 @@ func printaTipoDeComando(comando int) {
 
 func iniciarMonitoramento() {
 	fmt.Println("Monitorando...")
-	site := "http://random-status-code.herokuapp.com/"
+	sites := []string{"http://random-status-code.herokuapp.com/", "https://www.alura.com.br/",
+		"https://github.com/", "https://www.bancointer.com.br/"}
+
+	for i := 0; i < monitoramentos; i++ {
+		for indice, site := range sites {
+			fmt.Println("")
+			fmt.Println("Testando site", indice, ":", site)
+			verificaSiteOnline(site)
+		}
+		time.Sleep(delayDoMonitoramento * time.Second)
+	}
+	fmt.Println("")
+}
+
+func verificaSiteOnline(site string) {
+
 	resp, _ := http.Get(site)
 	if resp.StatusCode == 200 {
 		fmt.Println("Site:", site, "foi carregado com sucesso! Status:", resp.Status)
 	} else {
-		fmt.Println("Buscando o log")
-		informarLogs(resp.StatusCode, site)
+		fmt.Println("Site:", site, "está com problemas!!! Staus:", resp.StatusCode)
 	}
-}
-
-func informarLogs(status int, site string) {
-	fmt.Println("Iniciando os logs...")
-	fmt.Println("Site:", site, "se encontra instável no momento", status)
 }
