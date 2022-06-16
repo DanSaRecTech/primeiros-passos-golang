@@ -167,3 +167,106 @@ for i := 0; i < 5; i++ {
 		time.Sleep(5 * time.Second)
 	}
 
+### Lendo arquivos
+
+Em go, o pacote responsável por se comunicar com o sistema de operação do computador é o "os". 
+Nele, temos o método open, onde passamos o arquivo que queremos ler e ele busca as informações. 
+Esse Open() tem dois parâmetros: o arquivo, em si, e um erro, como já vimos acima. 
+
+arquivo, err := os.Open("sites.txt")
+result -> &{0xc0000d0f00}
+
+Observando acima, em vez de informações válidas do arquivo, retornou os bytes do arquivo, pois, o Open() literalmente pega o arquivo da memória do computador e taca dentro da variável arquivo. Ou seja, um ponteiro puro. 
+Há outras formas de ler o arquivo, como o da biblioteca "ioutil" que tem a função ReadFile().
+
+A funçao acima retorna um array de bytes, mas ele acaba sendo mais fácil de transformar numa string. Basta envolver a variável arquivo em uma string. Abaixo um exemplo.
+
+func lerSitesDoArquivo() []string {
+
+	var sites []string
+	arquivo, err := ioutil.ReadFile("sites.txt")
+	isErro(err)
+	fmt.Println(string(arquivo))
+	return sites
+}
+
+Com o ReadFile, ele retorna todos os textos dentro do arquivo. Caso a gente precise ler linha a linha, ou fazer algo com a informação dentro do arquivo, o recomendado é usar o pacote bufio, onde se encontra o método NewRead(), onde passamos no parâmetro o arquivo, que abrimos com o os.Open(arquivo.txt)
+
+O método acima, tem algumas facilidades, para podermos ler o arquivo linha a linha.
+Caso queira ler linha a linha, usamos um método chamado ReadString, onde passamos o comando de pulo de linha, que é o \n.
+
+Exemplo do código:
+
+func lerSitesDoArquivo() []string {
+
+	var sites []string
+	arquivo, err := os.Open("sites.txt")
+
+	isErro(err)
+	leitor := bufio.NewReader(arquivo)
+	for {
+		linha, _ := leitor.ReadString('\n')
+		linha = strings.TrimSpace(linha)
+	}
+	return sites
+}
+
+O TrimSpace é usado, pois, no final de cada linha, existe um espaço e um \n. Assim, ele tira esse espaço e tabulações.
+No código acima, o for é usado para ler todas as linhas do arquivo. Abaixo, uma implementação para validar se ele chegou na última linha. Caso sim, ele para a execução e retorna as informações do arquivo.
+
+func lerSitesDoArquivo() []string {
+
+	var sites []string
+	arquivo, err := os.Open("sites.txt")
+
+	isErro(err)
+	leitor := bufio.NewReader(arquivo)
+	for {
+		linha, err := leitor.ReadString('\n')
+		linha = strings.TrimSpace(linha)
+
+		sites = append(sites, linha)
+		if err == io.EOF {
+			break
+		}
+	}
+
+	arquivo.Close()
+	return sites
+}
+
+### Escrevendo arquivos
+
+Caso seja necessário abrir um arquivo e escrever informações nele, como um log, por exemplo, podemos usar o openFile do pacote "os".
+
+func registraLogs(site string, status bool) {
+	arquivo, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE, 0006)
+	isErro(err)
+	fmt.Println(arquivo)
+}
+
+Acima, ele pede três parâmetros no OpenFile...o nome do arquivo, a flag e a permissão. A flag é o tipo de de comando que o OpenFile vai poder executar. No caso acima, por exemplo, o RDWR abre o arquivo de leitura e grava informações nele. O CREATE, cria um novo arquivo, caso não exista. E o último parâmetro é a permissão que ele vai ter.
+
+https://pkg.go.dev/os - Documentação
+
+Existe um método para escrever as linhas no arquivo que eu criei ou abrir, que é o WriteString
+Passo no parâmetro as informações, em string, que eu desejo escrever e, no fim, concateno com um "\n". 
+
+func registraLogs(site string, status bool) {
+	arquivo, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	isErro(err)
+
+	arquivo.WriteString(site + "- online: " + strconv.FormatBool(status) + "\n")
+	arquivo.Close()
+}
+
+No método acima, transformamos o bool em string, usando o pacote strconv e o método FormatBool, passando o status, que é o bool.
+
+O Go tem uma forma diferente de formatar sua data. Abaixo um exemplo.
+
+arquivo.WriteString(time.Now().Format("02/01/2006 15:04:05") + " - " + site + " - online: " + strconv.FormatBool(status) + "\n")
+
+Documentação sobre esse padrão de formatação: https://go.dev/src/time/format.go
+
+
+

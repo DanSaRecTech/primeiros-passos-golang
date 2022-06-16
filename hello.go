@@ -4,8 +4,11 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"io/ioutil"
+	"log"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
@@ -52,7 +55,7 @@ func printaTipoDeComando(comando int) {
 	case monitorar:
 		iniciarMonitoramento()
 	case iniciarLogs:
-		fmt.Println("Iniciando os logs...")
+		exibirOsLogs()
 	case sairDoPrograma:
 		fmt.Println("Saindo do programa...")
 		os.Exit(0)
@@ -84,8 +87,10 @@ func verificaSiteOnline(site string) {
 
 	if resp.StatusCode == 200 {
 		fmt.Println("Site:", site, "foi carregado com sucesso! Status:", resp.Status)
+		registraLogs(site, true)
 	} else {
 		fmt.Println("Site:", site, "está com problemas!!! Staus:", resp.StatusCode)
+		registraLogs(site, false)
 	}
 }
 
@@ -96,21 +101,37 @@ func lerSitesDoArquivo() []string {
 
 	isErro(err)
 	leitor := bufio.NewReader(arquivo)
-
 	for {
-		linha, err := leitor.ReadString('\n') //até o fim da linha
-		linha = strings.TrimSpace(linha)      //tira o quebra linha no fim de cada linha
+		linha, err := leitor.ReadString('\n')
+		linha = strings.TrimSpace(linha)
 
 		sites = append(sites, linha)
 		if err == io.EOF {
 			break
 		}
 	}
+
+	arquivo.Close()
 	return sites
+}
+
+func registraLogs(site string, status bool) {
+	arquivo, err := os.OpenFile("log.txt", os.O_RDWR|os.O_CREATE|os.O_APPEND, 0666)
+	isErro(err)
+
+	arquivo.WriteString(time.Now().Format("02/01/2006 15:04:05") + " - " + site + " - online: " + strconv.FormatBool(status) + "\n")
+	arquivo.Close()
+}
+
+func exibirOsLogs() {
+	arquivo, err := ioutil.ReadFile("log.txt")
+	isErro(err)
+	fmt.Println(string(arquivo))
 }
 
 func isErro(err error) {
 	if err != nil {
 		fmt.Println("Ocorreu um erro!!!", err)
+		log.Fatal(err)
 	}
 }
